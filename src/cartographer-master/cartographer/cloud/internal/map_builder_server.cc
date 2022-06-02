@@ -121,17 +121,14 @@ MapBuilderServer::MapBuilderServer(
                                   last_optimized_node_ids);
       });
 }
-// 设置启动标志位
-void MapBuilderServer::Start() {
-	shutting_down_ = false;
 
-	if (local_trajectory_uploader_) {
-		local_trajectory_uploader_->Start();
-	}
-  
-	StartSlamThread();
-	// 启动grpc服务器
-	grpc_server_->Start();
+void MapBuilderServer::Start() {
+  shutting_down_ = false;
+  if (local_trajectory_uploader_) {
+    local_trajectory_uploader_->Start();
+  }
+  StartSlamThread();
+  grpc_server_->Start();
 }
 
 void MapBuilderServer::WaitForShutdown() {

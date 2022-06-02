@@ -69,7 +69,7 @@ proto::SubmapsOptions2D CreateSubmapsOptions2D(
 
 Submap2D::Submap2D(const Eigen::Vector2f& origin, std::unique_ptr<Grid2D> grid,
                    ValueConversionTables* conversion_tables)
-      //由激光雷达原点生成子图原点？
+
     : Submap(transform::Rigid3d::Translation(
           Eigen::Vector3d(origin.x(), origin.y(), 0.))),
       conversion_tables_(conversion_tables) {

@@ -475,7 +475,8 @@ void Node::HandleMap(const nav_msgs::OccupancyGrid::ConstPtr& mapmsg)
 		for (int x = 0; x < 2000; ++x) {
 			// 原始的语义地图是uint8类型，所以先强制转换到uint8语义才
 			// 不会出错
-        	cnew[y*2000 + x] = (uint8_t)(mapmsg->data[y*2000 + x]);
+			int8_t sem = (mapmsg->data[y*2000 + x]);
+        	cnew[(1999-y)*2000 + x] = sem == -1?-1:(uint8_t)sem;
         }
 	}  
 }

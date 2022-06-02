@@ -50,6 +50,15 @@ std::vector<Eigen::Array2i> ProcessPixelMask(std::vector<Eigen::Array2i> pixel_m
                                            int flag,
                                            const uint8 intensities,
                                            const transform::Rigid3d local_pose_);
+std::vector<Eigen::Array2i> ProcessPixelMaskHit(std::vector<Eigen::Array2i> pixel_mask,
+                                           const Eigen::Array2i& scaled_begin,
+                                           const Eigen::Array2i& scaled_end,
+                                           int subpixel_scale,
+                                           int flag,
+                                           const uint8 intensities,
+                                           const transform::Rigid3d local_pose_,
+                                            const std::vector<uint16>& hit_table,
+                                         cartographer::mapping::ProbabilityGrid* probability_grid);
 std::vector<Eigen::Array2i> LocalToMap(const Eigen::Array2i& pixel,
               const Eigen::Array2i& begin,
               const Eigen::Array2i& end,

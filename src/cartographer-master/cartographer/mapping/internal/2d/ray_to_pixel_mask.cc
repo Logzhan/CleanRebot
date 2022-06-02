@@ -252,8 +252,8 @@ std::vector<Eigen::Array2i> ProcessPixelMask(std::vector<Eigen::Array2i> pixel_m
           //标志是否删去miss 0代表没有删去
           int flag_miss=0;
           //以小物体为中心2*2搜索
-          for (int i=-1;i<=1;i++){
-            for (int j=-1;j<=1;j++){
+          for (int i=-3;i<=3;i++){
+            for (int j=-3;j<=3;j++){
               if (cnew[(ym+j)*2000+xm+i]>100){
               //如果在非摄像头视域
               if (intensities == 0) {     
