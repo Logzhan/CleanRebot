@@ -78,8 +78,7 @@ LocalTrajectoryBuilder2D::TransformToGravityAlignedFrameAndFilter(
 }
 
 /**
- * @brief 进行扫描匹配
- * 
+ * @brief 进行扫描匹配，这个是Cartographer中非常核心的一个功能函数
  * @param[in] time 点云的时间
  * @param[in] pose_prediction 先验位姿
  * @param[in] filtered_gravity_aligned_point_cloud 匹配用的点云
@@ -94,6 +93,7 @@ std::unique_ptr<transform::Rigid2d> LocalTrajectoryBuilder2D::ScanMatch(
   // 使用active_submaps_的第一个子图进行匹配
   std::shared_ptr<const Submap2D> matching_submap =
       active_submaps_.submaps().front();
+
   // The online correlative scan matcher will refine the initial estimate for
   // the Ceres scan matcher.
   transform::Rigid2d initial_ceres_pose = pose_prediction;
@@ -108,7 +108,8 @@ std::unique_ptr<transform::Rigid2d> LocalTrajectoryBuilder2D::ScanMatch(
 
   auto pose_observation = absl::make_unique<transform::Rigid2d>();
   ceres::Solver::Summary summary;
-  // 使用ceres进行扫描匹配
+
+  // 给定初始位姿，使用ceres进行扫描匹配
   ceres_scan_matcher_.Match(pose_prediction.translation(), initial_ceres_pose,
                             filtered_gravity_aligned_point_cloud,
                             *matching_submap->grid(), pose_observation.get(),
@@ -377,9 +378,8 @@ LocalTrajectoryBuilder2D::AddAccumulatedRangeData(
 }
 
 /**
- * @brief 将处理后的雷达数据写入submap
- * 
- * @param[in] time 点云的时间
+ * @brief 将处理后的雷达数据插入到submap
+ * @param[in] time  点云的时间
  * @param[in] range_data_in_local 校正后的点云
  * @param[in] filtered_gravity_aligned_point_cloud 自适应体素滤波后的点云
  * @param[in] pose_estimate 扫描匹配后的三维位姿
@@ -392,6 +392,7 @@ LocalTrajectoryBuilder2D::InsertIntoSubmap(
     const sensor::PointCloud& filtered_gravity_aligned_point_cloud,
     const transform::Rigid3d& pose_estimate,
     const Eigen::Quaterniond& gravity_alignment) {
+
   // 如果移动距离过小, 或者时间过短, 不进行地图的更新
   if (motion_filter_.IsSimilar(time, pose_estimate)) {
   //if (motion_filter_.IsSimilarNew(time, pose_estimate,range_data_in_local)) {
@@ -451,7 +452,7 @@ void LocalTrajectoryBuilder2D::InitializeExtrapolator(const common::Time time) {
       options_.pose_extrapolator_options()
           .constant_velocity()
           .imu_gravity_time_constant()); // 10
-  // 添加初始位姿
+  // 使用单位矩阵作为初始位姿
   extrapolator_->AddPose(time, transform::Rigid3d::Identity());
 }
 

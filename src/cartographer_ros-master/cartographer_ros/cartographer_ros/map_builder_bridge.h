@@ -78,6 +78,7 @@ class MapBuilderBridge {
           ::cartographer::mapping::TrajectoryBuilderInterface::SensorId>&
           expected_sensor_ids,
       const TrajectoryOptions& trajectory_options);
+
   void FinishTrajectory(int trajectory_id);
   void RunFinalOptimization();
   bool SerializeState(const std::string& filename,

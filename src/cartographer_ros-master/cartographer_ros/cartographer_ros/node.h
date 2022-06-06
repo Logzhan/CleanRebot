@@ -183,6 +183,7 @@ class Node {
 
   absl::Mutex mutex_;
   std::unique_ptr<cartographer_ros::metrics::FamilyFactory> metrics_registry_;
+  // 
   MapBuilderBridge map_builder_bridge_ GUARDED_BY(mutex_);
   
   ::ros::Publisher markerPub;
