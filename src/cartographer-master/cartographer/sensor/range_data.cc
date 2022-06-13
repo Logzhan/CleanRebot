@@ -31,12 +31,33 @@ RangeData TransformRangeData(const RangeData& range_data,
   };
 }
 
+
+
+RangeData TransformRangeDataNew( RangeData& range_data,
+                              const transform::Rigid3f& transform) {
+  return RangeData{
+      transform * range_data.origin,
+      TransformPointCloudNew(range_data.returns, transform),
+      TransformPointCloudNew(range_data.misses, transform),
+  };
+}
 RangeData CropRangeData(const RangeData& range_data, const float min_z,
                         const float max_z) {
   return RangeData{range_data.origin,
                    CropPointCloud(range_data.returns, min_z, max_z),
                    CropPointCloud(range_data.misses, min_z, max_z)};
 }
+
+RangeData CropRangeDataNew(RangeData& range_data,  float min_z,
+                         float max_z) {
+  return RangeData{range_data.origin,
+                   CropPointCloud(range_data.returns, min_z, max_z),
+                   CropPointCloud(range_data.misses, min_z, max_z)};
+}
+
+
+
+
 
 proto::RangeData ToProto(const RangeData& range_data) {
   proto::RangeData proto;

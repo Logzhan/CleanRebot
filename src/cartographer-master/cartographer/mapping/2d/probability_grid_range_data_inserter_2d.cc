@@ -181,15 +181,15 @@ void CastRays(const sensor::RangeData& range_data,
   // }
 
   //Finally, compute and add empty rays based on misses in the range data.
-  // for (const sensor::RangefinderPoint& missing_echo : range_data.misses) {
-  //   std::vector<Eigen::Array2i> ray = RayToPixelMask(
-  //       begin, superscaled_limits.GetCellIndex(missing_echo.position.head<2>()),
-  //       kSubpixelScale);
-  //   for (const Eigen::Array2i& cell_index : ray) {
-  //     // 从起点到misses点之前, 更新miss点的栅格值
-  //     probability_grid->ApplyLookupTable(cell_index, miss_table);
-  //   }
-  // }
+  for (const sensor::RangefinderPoint& missing_echo : range_data.misses) {
+    std::vector<Eigen::Array2i> ray = RayToPixelMask(
+        begin, superscaled_limits.GetCellIndex(missing_echo.position.head<2>()),
+        kSubpixelScale);
+    for (const Eigen::Array2i& cell_index : ray) {
+      // 从起点到misses点之前, 更新miss点的栅格值
+      probability_grid->ApplyLookupTable(cell_index, miss_table);
+    }
+  }
 }
 
 

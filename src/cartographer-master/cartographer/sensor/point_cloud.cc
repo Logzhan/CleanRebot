@@ -42,6 +42,12 @@ bool PointCloud::empty() const { return points_.empty(); }
 const std::vector<PointCloud::PointType>& PointCloud::points() const {
   return points_;
 }
+
+ std::vector<PointCloud::PointType>& PointCloud::pointreturn()  {
+  return points_;
+}
+
+
 // 返回vector的引用
 const std::vector<float>& PointCloud::intensities() const {
   return intensities_;
@@ -81,6 +87,17 @@ PointCloud TransformPointCloud(const PointCloud& point_cloud,
   }
   return PointCloud(points, point_cloud.intensities());
 }
+
+PointCloud TransformPointCloudNew( PointCloud& point_cloud,
+                               const transform::Rigid3f& transform) {
+  std::vector<RangefinderPoint> points;
+  points.reserve(point_cloud.size());
+  for (const RangefinderPoint& point : point_cloud.points()) {
+    points.emplace_back(transform * point);
+  }
+  return PointCloud(points, point_cloud.intensities());
+}
+
 
 /**
  * @brief 返回坐标变换后的点云

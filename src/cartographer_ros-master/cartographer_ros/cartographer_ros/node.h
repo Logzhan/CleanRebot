@@ -109,7 +109,7 @@ class Node {
   void HandlePointCloud2Message(int trajectory_id, const std::string& sensor_id,
                                 const sensor_msgs::PointCloud2::ConstPtr& msg);
   
-  void HandleMap(const nav_msgs::OccupancyGrid::ConstPtr& mapmsg);
+   void HandleMap(const nav_msgs::OccupancyGrid::ConstPtr& mapmsg);
 
   // Serializes the complete Node state.
   void SerializeState(const std::string& filename,
@@ -183,7 +183,6 @@ class Node {
 
   absl::Mutex mutex_;
   std::unique_ptr<cartographer_ros::metrics::FamilyFactory> metrics_registry_;
-  // 
   MapBuilderBridge map_builder_bridge_ GUARDED_BY(mutex_);
   
   ::ros::Publisher markerPub;

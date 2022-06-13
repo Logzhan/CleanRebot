@@ -113,7 +113,6 @@ class TrajectoryBuilderInterface {
 };
 
 proto::SensorId ToProto(const TrajectoryBuilderInterface::SensorId& sensor_id);
-
 TrajectoryBuilderInterface::SensorId FromProto(
     const proto::SensorId& sensor_id_proto);
 

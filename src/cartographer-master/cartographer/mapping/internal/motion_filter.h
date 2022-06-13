@@ -24,6 +24,7 @@
 #include "cartographer/mapping/proto/motion_filter_options.pb.h"
 #include "cartographer/transform/rigid_transform.h"
 #include "cartographer/sensor/range_data.h"
+#include "cartographer/sensor/point_cloud.h"
 namespace cartographer {
 namespace mapping {
 
@@ -39,7 +40,7 @@ class MotionFilter {
   // threshold, returns false. Otherwise the relative motion is accumulated and
   // true is returned.
   bool IsSimilar(common::Time time, const transform::Rigid3d& pose);
-  bool IsSimilarNew(common::Time time, const transform::Rigid3d& pose,const sensor::RangeData& range_data_in_local);
+  bool IsSimilarNew(common::Time time, const transform::Rigid3d& pose,sensor::RangeData& range_data_in_local);
 
  private:
   const proto::MotionFilterOptions options_;

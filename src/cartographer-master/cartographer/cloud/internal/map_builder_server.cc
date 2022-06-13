@@ -157,11 +157,9 @@ void MapBuilderServer::Shutdown() {
 void MapBuilderServer::ProcessSensorDataQueue() {
   LOG(INFO) << "Starting SLAM thread.";
   while (!shutting_down_) {
-	  
     kIncomingDataQueueMetric->Set(incoming_data_queue_.Size());
     std::unique_ptr<MapBuilderContextInterface::Data> sensor_data =
         incoming_data_queue_.PopWithTimeout(kPopTimeout);
-
     if (sensor_data) {
       grpc_server_->GetContext<MapBuilderContextInterface>()
           ->AddSensorDataToTrajectory(*sensor_data);

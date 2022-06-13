@@ -17,7 +17,7 @@
 #include "cartographer/mapping/internal/2d/ray_to_pixel_mask.h"
 
 #include "Eigen/Dense"
-// È«¾Ö±äÁ¿£º´ÓÓïÒåµØÍ¼»°Ìâ»ñÈ¡µ½µÄÓïÒåµØÍ¼ĞÅÏ¢
+// å…¨å±€å˜é‡ï¼šä»è¯­ä¹‰åœ°å›¾è¯é¢˜è·å–åˆ°çš„è¯­ä¹‰åœ°å›¾ä¿¡æ¯
 int cnew[4000000]={0};
 namespace cartographer {
 namespace mapping {
@@ -162,7 +162,7 @@ Eigen::Affine3d ToEigen(const ::cartographer::transform::Rigid3d& rigid3) {
 
 /**----------------------------------------------------------------------
 * Function    : LocalToMap
-* Description : ¸ù¾İlocal_pose½«missµã×ª»»³ÉÈ«¾Ö×ø±ê
+* Description : æ ¹æ®local_poseå°†missç‚¹è½¬æ¢æˆå…¨å±€åæ ‡
 * Date        : 2022/05/25 wangyukun 
 *---------------------------------------------------------------------**/
 std::vector<Eigen::Array2i> LocalToMap(const Eigen::Array2i& pixel,
@@ -228,7 +228,7 @@ std::vector<Eigen::Array2i> LocalToMap(const Eigen::Array2i& pixel,
 }
 
 /**
- * @brief ·ÇÉãÏñÍ·ÊÓÓò»òÉãÏñÍ·ÊÓÓò³¬¹ıÁ½Ã×·¶Î§µÄĞ¡ÎïÌå²»¸üĞÂ£¬¼´¸Ã·¶Î§ÄÚµÄÉ¾È¥missµã
+ * @brief éæ‘„åƒå¤´è§†åŸŸæˆ–æ‘„åƒå¤´è§†åŸŸè¶…è¿‡ä¸¤ç±³èŒƒå›´çš„å°ç‰©ä½“ä¸æ›´æ–°ï¼Œå³è¯¥èŒƒå›´å†…çš„åˆ å»missç‚¹
  * 
  */
 std::vector<Eigen::Array2i> ProcessPixelMask(std::vector<Eigen::Array2i> pixel_mask,
@@ -249,21 +249,21 @@ std::vector<Eigen::Array2i> ProcessPixelMask(std::vector<Eigen::Array2i> pixel_m
       xm=LocalToMap(*pixel,scaled_begin,scaled_end,subpixel_scale,flag,local_pose_)[1].x();
       ym=LocalToMap(*pixel,scaled_begin,scaled_end,subpixel_scale,flag,local_pose_)[1].y();
         if(0<ym*2000+xm && ym*2000+xm<4000000){
-          //±êÖ¾ÊÇ·ñÉ¾È¥miss 0´ú±íÃ»ÓĞÉ¾È¥
+          //æ ‡å¿—æ˜¯å¦åˆ å»miss 0ä»£è¡¨æ²¡æœ‰åˆ å»
           int flag_miss=0;
-          //ÒÔĞ¡ÎïÌåÎªÖĞĞÄ2*2ËÑË÷
+          //ä»¥å°ç‰©ä½“ä¸ºä¸­å¿ƒ2*2æœç´¢
           for (int i=-3;i<=3;i++){
             for (int j=-3;j<=3;j++){
               if (cnew[(ym+j)*2000+xm+i]>100){
-              //Èç¹ûÔÚ·ÇÉãÏñÍ·ÊÓÓò
+              //å¦‚æœåœ¨éæ‘„åƒå¤´è§†åŸŸ
               if (intensities == 0) {     
                 pixel=pixel_mask.erase(pixel);
                 //probability_grid->ApplyLookupTable(*pixel, hit_table);
                 flag_miss=1;
                 break;
-              //ÔÚÉãÏñÍ·ÊÓÓò
+              //åœ¨æ‘„åƒå¤´è§†åŸŸ
               }else{
-                //³¬¹ıÁ½Ã× Ğ¡ÎïÌå²»¸üĞÂ
+                //è¶…è¿‡ä¸¤ç±³ å°ç‰©ä½“ä¸æ›´æ–°
                 if ((xm-xm_begin)*(xm-xm_begin)+(ym-ym_begin)*(ym-ym_begin)>1600){
                   pixel=pixel_mask.erase(pixel);
                   flag_miss=1;
@@ -308,7 +308,7 @@ std::vector<Eigen::Array2i> RayToPixelMaskVisualNew(const Eigen::Array2i& scaled
   
   // For simplicity, we order 'scaled_begin' and 'scaled_end' by their x
   // coordinate.
-  //²âÊÔµØÍ¼Êı¾İÊÇ·ñÊÕµ½
+  //æµ‹è¯•åœ°å›¾æ•°æ®æ˜¯å¦æ”¶åˆ°
   // int flag = 0;
   // for (int y = 2000 - 1; y >= 0;--y) {
   //       for (int x = 0; x < 2000; ++x) {
@@ -318,7 +318,7 @@ std::vector<Eigen::Array2i> RayToPixelMaskVisualNew(const Eigen::Array2i& scaled
   //       }
   // }
   
-  //²âÊÔ×ø±ê×ª»»ÊÇ·ñÕıÈ·
+  //æµ‹è¯•åæ ‡è½¬æ¢æ˜¯å¦æ­£ç¡®
   // if(intensities==200){
     //const Eigen::Matrix4d homo =ToEigen(local_pose_).matrix();
     // LOG(INFO)<<"wyk--guiji scal_begin:"<<scaled_begin.x()/1000<<"         "<<scaled_begin.y()/1000;
@@ -344,7 +344,7 @@ std::vector<Eigen::Array2i> RayToPixelMaskVisualNew(const Eigen::Array2i& scaled
   
 
   // }
-  //Ğ¡ÎïÌå²âÊÔ
+  //å°ç‰©ä½“æµ‹è¯•
   // for (int y = 1200; y >=900 ;--y) {
   //       for (int x = 1000; x <1200 ; ++x) {
   //            if(cnew[y*2000+x]==200){
@@ -356,10 +356,11 @@ std::vector<Eigen::Array2i> RayToPixelMaskVisualNew(const Eigen::Array2i& scaled
   // }
 
     if (scaled_begin.x() > scaled_end.x()) {
-    	//flag = 1´ú±íendºÍbegin½»»»
-    	flag = 1;
-    	return RayToPixelMaskVisualNew(scaled_end, scaled_begin, subpixel_scale,intensities,local_pose_,flag,hit_table,probability_grid);
- 	}
+    //flag=1ä»£è¡¨endå’Œbeginäº¤æ¢
+    flag=1;
+    return RayToPixelMaskVisualNew(scaled_end, scaled_begin, subpixel_scale,intensities,local_pose_,flag,hit_table,
+                                         probability_grid);
+ }
   
     // if(intensities >100){
     //    std::cout<<int(intensities)<<std::endl;

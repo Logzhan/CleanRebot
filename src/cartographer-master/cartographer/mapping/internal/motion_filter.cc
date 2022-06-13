@@ -12,18 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * Description : cartographerÔË¶¯ÂË²¨Æ÷Ïà¹Ø¹¦ÄÜ
-                 1¡¢ÅĞ¶Ïµ±Ç°×´Ì¬ÊÇ·ñºÍÉÏ´Î×´Ì¬·Ç³£½Ó½ü£¬¸ù¾İÅĞ¶ÏµÄ½á¹û¾ö¶¨ÊÇ·ñ²åÈë
-				 ×ÓÍ¼
- * Date        : 2022-05-29 wyk & zhanli
  */
 
-#include "cartographer/mapping/internal/motion_filter.h"
 
+#include <Eigen/Dense>
+#include "cartographer/mapping/internal/motion_filter.h"
+#include "Eigen/Core"
 #include "cartographer/transform/transform.h"
 #include "glog/logging.h"
 #include <iostream>
 #include <math.h>
+int num_origin=1;
+int num_little=1;
 namespace cartographer {
 namespace mapping {
 
@@ -42,73 +42,88 @@ proto::MotionFilterOptions CreateMotionFilterOptions(
 MotionFilter::MotionFilter(const proto::MotionFilterOptions& options)
     : options_(options) {}
 
-
 bool MotionFilter::IsSimilar(const common::Time time,
                              const transform::Rigid3d& pose) {
-							 
   LOG_IF_EVERY_N(INFO, num_total_ >= 500, 500)
       << "Motion filter reduced the number of nodes to "
       << 100. * num_different_ / num_total_ << "%.";
   ++num_total_;
 
-  // Èç¹û½Ç¶È±ä»¯½Ï´ó£¬´ËÊ±ÉãÏñÍ·½áºÏÀ×´ïÉú³ÉµÄÓïÒå±ê×¼£¬´ËÊ±²åÈëµ½SubmapÖĞ
-  // ÈİÒ×²úÉú´íÎóµÄµØÍ¼
   if (transform::GetAngle(pose.inverse() * last_pose_) > 0.02) {
    last_time_ = time;
    last_pose_ = pose;
+   //++num_different_;
     return true;
   }
-  
   if (num_total_ > 1 &&
-      // Ô­Ê¼°æ±¾ÊÇcommon::FromSeconds(options_.max_time_seconds())
       time - last_time_ <= common::FromSeconds(0.8) &&
       (pose.translation() - last_pose_.translation()).norm() <=
           options_.max_distance_meters() &&
-	  // ¼ÆËãÉÏµ±Ç°½Ç¶ÈºÍÉÏÒ»´Î½Ç¶ÈµÄ²îÖµ(»¡¶Èradians)
       transform::GetAngle(pose.inverse() * last_pose_) <=
-          options_.max_angle_radians()) {
+          options_.max_angle_radians() ) {
+    //è®¤ä¸ºå°è½¦æ²¡åŠ¨ æ‰€ä»¥æ²¡æœ‰è®°å½•ä¸Šä¸€æ—¶åˆ»çš„ä½å§¿
     return true;
   }
+  
   last_time_ = time;
   last_pose_ = pose;
-  // Í³¼Æ²»Í¬À×´ïÖ¡µÄÊıÁ¿£¬Ö»ÓĞ·µ»ØfalseµÄÊ±ºò²Å¸üĞÂnum_different_
   ++num_different_;
   return false;
 }
 
 bool MotionFilter::IsSimilarNew(const common::Time time,
                              const transform::Rigid3d& pose,
-                             const sensor::RangeData& range_data) {
-  LOG_IF_EVERY_N(INFO, num_total_ >= 500, 500)
+                             //å¼•ç”¨ä¼ é€’å’ŒæŒ‡é’ˆä¼ é€’çš„åŒºåˆ«ï¼Ÿ
+                            // ... const sensor::RangeData& range_data
+                            sensor::RangeData& range_data) {
+
+	LOG_IF_EVERY_N(INFO, num_total_ >= 500, 500)
       << "Motion filter reduced the number of nodes to "
       << 100. * num_different_ / num_total_ << "%.";
-  ++num_total_;
-  int flag=0;
-  for(int i=0;i<range_data.returns.intensities().size();i++){
-      if(range_data.returns.intensities()[i]==115 || range_data.returns.intensities()[i]==117 || range_data.returns.intensities()[i]==200 ||
-      range_data.returns.intensities()[i]==201 || range_data.returns.intensities()[i]==121  )
-        flag=1;
-  }
-  if (num_total_ > 1 &&
-      time - last_time_ <= common::FromSeconds(options_.max_time_seconds()) &&
-      (pose.translation() - last_pose_.translation()).norm() <=
-          options_.max_distance_meters() &&
-      transform::GetAngle(pose.inverse() * last_pose_) <=
-          options_.max_angle_radians() &&  flag==0) {
-    return true;
-  }
- if ( time - last_time_ >= common::FromSeconds(0.1) &&  flag==1) {
-        last_time_ = time;
-        last_pose_ = pose;
-        ++num_different_;
-        return false;
-  }else{
-      return true;
-  }
-  last_time_ = time;
-  last_pose_ = pose;
-  ++num_different_;
-  return false;
+	++num_total_;
+
+	//æ— è®ºæ˜¯å¦æ£€æµ‹åˆ°å°ç‰©ä½“ï¼Œæ‘’å¼ƒæ—‹è½¬æ—¶çš„é›·è¾¾å¸§
+	if (transform::GetAngle(pose.inverse() * last_pose_) > 0.02) {
+    	last_time_ = time;
+    	last_pose_ = pose;
+    	return true;
+  	}
+
+  	if(num_total_ <= 1 ||
+       time - last_time_ > common::FromSeconds(options_.max_time_seconds()) ||
+      (pose.translation() - last_pose_.translation()).norm() > options_.max_distance_meters() ||
+       transform::GetAngle(pose.inverse() * last_pose_) > options_.max_angle_radians()) {
+
+		last_time_ = time;
+		last_pose_ = pose;
+		++num_different_;
+		return false;
+  	}
+
+	//æ£€æµ‹è¯¥é›·è¾¾å¸§æ˜¯å¦å«æœ‰å°ç‰©ä½“
+	int flag = 0;
+	for(int i = 0; i < range_data.returns.intensities().size();i++){
+		if(range_data.returns.intensities()[i] > 100){
+			flag = 1;
+			break;
+		}
+	}
+	if(flag == 0){
+		return true;
+	}
+	
+	for(int i = 0;i<range_data.returns.intensities().size();i++){
+		if(range_data.returns.intensities()[i] > 100)
+		continue;
+		else{
+		//range_data.returns.pointreturn().erase(range_data.returns.pointreturn().begin()+i);
+		range_data.returns.pointreturn()[i].position.fill(0);
+		}   
+	}
+	last_time_ = time;
+	last_pose_ = pose;
+	++num_different_;
+	return false;
 }
 
 }  // namespace mapping

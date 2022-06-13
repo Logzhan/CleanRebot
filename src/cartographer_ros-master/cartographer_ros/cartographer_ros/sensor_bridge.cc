@@ -320,14 +320,14 @@ void SensorBridge::HandleRangefinder(
   // 将点云的坐标转成 tracking 坐标系下的坐标, 再传入trajectory_builder_
   if (sensor_to_tracking != nullptr) {
     trajectory_builder_->AddSensorData(
-    ensor_id, carto::sensor::TimedPointCloudData{
-	time, 
-	sensor_to_tracking->translation().cast<float>(),
-	// 将点云从雷达坐标系下转到tracking_frame坐标系系下
-	carto::sensor::TransformTimedPointCloud(
-		ranges, sensor_to_tracking->cast<float>()).points,
-	carto::sensor::TransformTimedPointCloud(
-		ranges, sensor_to_tracking->cast<float>()).intensities} ); // 强度始终为空
+        sensor_id, carto::sensor::TimedPointCloudData{
+                       time, 
+                       sensor_to_tracking->translation().cast<float>(),
+                       // 将点云从雷达坐标系下转到tracking_frame坐标系系下
+                       carto::sensor::TransformTimedPointCloud(
+                           ranges, sensor_to_tracking->cast<float>()).points,
+                       carto::sensor::TransformTimedPointCloud(
+                           ranges, sensor_to_tracking->cast<float>()).intensities} ); // 强度始终为空
   }
 }
 

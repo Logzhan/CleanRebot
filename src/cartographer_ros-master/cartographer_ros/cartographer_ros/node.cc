@@ -101,12 +101,11 @@ Node::Node(
     : node_options_(node_options),
       map_builder_bridge_(node_options_, std::move(map_builder), tf_buffer) {
   absl::MutexLock lock(&mutex_);
-
   if (collect_metrics) {
     metrics_registry_ = absl::make_unique<metrics::FamilyFactory>();
     carto::metrics::RegisterAllMetrics(metrics_registry_.get());
   }
-  // submap_list·¢²¼Æ÷£¬ÓÃÓÚ·¢²¼submap_listĞÅÏ¢
+  // submap_listå‘å¸ƒå™¨ï¼Œç”¨äºå‘å¸ƒsubmap_listä¿¡æ¯
   submap_list_publisher_ =
       node_handle_.advertise<::cartographer_ros_msgs::SubmapList>(
           kSubmapListTopic, kLatestOnlyPublisherQueueSize);
@@ -202,7 +201,7 @@ bool Node::HandleTrajectoryQuery(
 
 void Node::PublishSubmapList(const ::ros::WallTimerEvent& unused_timer_event) {
 	absl::MutexLock lock(&mutex_);
-	// ´Ómap_builder_bridgeÖĞ»ñÈ¡submapLis²¢·¢ËÍ
+	// ä»map_builder_bridgeä¸­è·å–submapLiså¹¶å‘é€
 	submap_list_publisher_.publish(map_builder_bridge_.GetSubmapList());
 }
 
@@ -464,17 +463,17 @@ int Node::AddTrajectory(const TrajectoryOptions& options) {
 
 /**----------------------------------------------------------------------
 * Function    : HandleMap
-* Description : ´ÓROSÖĞ½ÓÊÕÓÉOccupancy_gird·¢ËÍµÄÓïÒåµØÍ¼»°Ìâ£¬²¢°ÑÊı¾İ¸³Öµ
-                ¸øcnew
+* Description : ä»ROSä¸­æ¥æ”¶ç”±Occupancy_girdå‘é€çš„è¯­ä¹‰åœ°å›¾è¯é¢˜ï¼Œå¹¶æŠŠæ•°æ®èµ‹å€¼
+                ç»™cnew
 * Date        : 2022/05/29 wangyukun 
 *---------------------------------------------------------------------**/
 void Node::HandleMap(const nav_msgs::OccupancyGrid::ConstPtr& mapmsg)
 {
-	// ´Óoccupancy·¢ËÍµÄÓïÒåµØÍ¼ÖĞ»ñÈ¡Êı¾İ²¢¸³Öµ
+	// ä»occupancyå‘é€çš„è¯­ä¹‰åœ°å›¾ä¸­è·å–æ•°æ®å¹¶èµ‹å€¼
 	for (int y = 2000 - 1; y >= 0;--y) {
 		for (int x = 0; x < 2000; ++x) {
-			// Ô­Ê¼µÄÓïÒåµØÍ¼ÊÇuint8ÀàĞÍ£¬ËùÒÔÏÈÇ¿ÖÆ×ª»»µ½uint8ÓïÒå²Å
-			// ²»»á³ö´í
+			// åŸå§‹çš„è¯­ä¹‰åœ°å›¾æ˜¯uint8ç±»å‹ï¼Œæ‰€ä»¥å…ˆå¼ºåˆ¶è½¬æ¢åˆ°uint8è¯­ä¹‰æ‰
+			// ä¸ä¼šå‡ºé”™
 			int8_t sem = (mapmsg->data[y*2000 + x]);
         	cnew[(1999-y)*2000 + x] = sem == -1?-1:(uint8_t)sem;
         }

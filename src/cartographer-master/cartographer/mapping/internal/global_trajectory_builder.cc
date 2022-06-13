@@ -58,7 +58,7 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
       const sensor::TimedPointCloudData& timed_point_cloud_data) override {
     CHECK(local_trajectory_builder_)
         << "Cannot add TimedPointCloudData without a LocalTrajectoryBuilder.";
-	// å…¨å±€è½¨è¿¹æž„å»ºå™¨å…ˆè°ƒç”¨æœ¬åœ°è½¨è¿¹æž„å»ºå™¨	
+	// È«¾Ö¹ì¼£¹¹½¨Æ÷ÏÈµ÷ÓÃ±¾µØ¹ì¼£¹¹½¨Æ÷	
     std::unique_ptr<typename LocalTrajectoryBuilder::MatchingResult>
         matching_result = local_trajectory_builder_->AddRangeData(
             sensor_id, timed_point_cloud_data);
@@ -67,16 +67,13 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
       return;
     }
     kLocalSlamMatchingResults->Increment();
-
     std::unique_ptr<InsertionResult> insertion_result;
-
     if (matching_result->insertion_result != nullptr) {
       kLocalSlamInsertionResults->Increment();
       auto node_id = pose_graph_->AddNode(
           matching_result->insertion_result->constant_data, trajectory_id_,
           matching_result->insertion_result->insertion_submaps);
       CHECK_EQ(node_id.trajectory_id, trajectory_id_);
-
       insertion_result = absl::make_unique<InsertionResult>(InsertionResult{
           node_id, matching_result->insertion_result->constant_data,
           std::vector<std::shared_ptr<const Submap>>(

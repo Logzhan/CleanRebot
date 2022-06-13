@@ -34,7 +34,7 @@ options = {
 MAP_BUILDER.use_trajectory_builder_2d = true
 MAP_BUILDER.num_background_threads = 8
 
-TRAJECTORY_BUILDER_2D.submaps.num_range_data = 10
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 10000
 TRAJECTORY_BUILDER_2D.min_range = 0.15
 TRAJECTORY_BUILDER_2D.max_range = 6.
 TRAJECTORY_BUILDER_2D.missing_data_ray_length = 1.

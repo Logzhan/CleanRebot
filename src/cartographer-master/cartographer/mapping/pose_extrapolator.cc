@@ -137,6 +137,7 @@ transform::Rigid3d PoseExtrapolator::ExtrapolatePose(const common::Time time) {
   if (cached_extrapolated_pose_.time != time) {
     const Eigen::Vector3d translation =
         ExtrapolateTranslation(time) + newest_timed_pose.pose.translation();
+
     const Eigen::Quaterniond rotation =
         newest_timed_pose.pose.rotation() *
         ExtrapolateRotation(time, extrapolation_imu_tracker_.get());

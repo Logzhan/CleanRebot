@@ -48,6 +48,9 @@ class PointCloud {
   bool empty() const;
 
   const std::vector<PointType>& points() const;
+  //....重载
+  std::vector<PointType>& pointreturn();
+
   const std::vector<float>& intensities() const;
   const PointType& operator[](const size_t index) const;
 
@@ -119,6 +122,10 @@ struct PointCloudWithIntensities {
 // Transforms 'point_cloud' according to 'transform'.
 PointCloud TransformPointCloud(const PointCloud& point_cloud,
                                const transform::Rigid3f& transform);
+//...
+PointCloud TransformPointCloudNew(PointCloud& point_cloud,
+                               const transform::Rigid3f& transform);
+
 
 // ...Transforms 'point_cloud' according to 'transform'.
 PointCloudWithIntensities TransformTimedPointCloud(const PointCloudWithIntensities& point_cloud,

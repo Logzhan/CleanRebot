@@ -38,8 +38,16 @@ struct RangeData {
 RangeData TransformRangeData(const RangeData& range_data,
                              const transform::Rigid3f& transform);
 
+RangeData TransformRangeDataNew( RangeData& range_data,
+                              const transform::Rigid3f& transform);
+
+
+
 // Crops 'range_data' according to the region defined by 'min_z' and 'max_z'.
 RangeData CropRangeData(const RangeData& range_data, float min_z, float max_z);
+
+RangeData CropRangeDataNew(RangeData& range_data, float min_z, float max_z);
+
 
 // Converts 'range_data' to a proto::RangeData.
 proto::RangeData ToProto(const RangeData& range_data);

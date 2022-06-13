@@ -78,14 +78,24 @@ class LocalTrajectoryBuilder2D {
 
  private:
   std::unique_ptr<MatchingResult> AddAccumulatedRangeData(
-      common::Time time, const sensor::RangeData& gravity_aligned_range_data,
+      common::Time time, sensor::RangeData& gravity_aligned_range_data,
       const transform::Rigid3d& gravity_alignment,
       const absl::optional<common::Duration>& sensor_duration);
+
+
   sensor::RangeData TransformToGravityAlignedFrameAndFilter(
       const transform::Rigid3f& transform_to_gravity_aligned_frame,
       const sensor::RangeData& range_data) const;
+
+
+  sensor::RangeData TransformToGravityAlignedFrameAndFilterNew(
+       const transform::Rigid3f& transform_to_gravity_aligned_frame,
+        sensor::RangeData& range_data) ;
+  
+
+
   std::unique_ptr<InsertionResult> InsertIntoSubmap(
-      common::Time time, const sensor::RangeData& range_data_in_local,
+      common::Time time,  sensor::RangeData& range_data_in_local,
       const sensor::PointCloud& filtered_gravity_aligned_point_cloud,
       const transform::Rigid3d& pose_estimate,
       const Eigen::Quaterniond& gravity_alignment);
